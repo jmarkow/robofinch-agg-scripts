@@ -20,7 +20,7 @@ ylimits=[.2 .7];
 nmads=100;
 win_size=20;
 win_overlap=19;
-
+padding=[];
 param_names=who('-regexp','^[a-z]');
 
 % parameter are all values that begin with lowercase letters
@@ -71,6 +71,8 @@ for i=1:2:nparams
 			win_size=varargin{i+1};
 		case 'win_overlap'
 			win_overlap=varargin{i+1};
+		case 'padding'
+			padding=varargin{i+1};
 	end
 end
 
@@ -110,7 +112,7 @@ end
 
 [raw,regress,trials]=fluolab_fb_proc(adc,audio,ttl,'blanking',blanking,'normalize',normalize,'dff',dff,'classify_trials',classify_trials,...
 	'channel',channel,'daf_level',daf_level,'trial_cut',trial_cut,'newfs',newfs,'tau',tau,'detrend_win',detrend_win,'detrend_method',detrend_method,...
-	'nmads',nmads);
+	'nmads',nmads,'padding',padding);
 
 if isempty(raw)
 	warning('Fluo analysis could not complete, skipping plotting...');
