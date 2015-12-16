@@ -21,6 +21,8 @@ nmads=100;
 win_size=20;
 win_overlap=19;
 padding=[];
+use_reference=0;
+
 param_names=who('-regexp','^[a-z]');
 
 % parameter are all values that begin with lowercase letters
@@ -73,6 +75,8 @@ for i=1:2:nparams
 			win_overlap=varargin{i+1};
 		case 'padding'
 			padding=varargin{i+1};
+		case 'use_reference'
+			use_reference=varargin{i+1};
 	end
 end
 
@@ -101,7 +105,6 @@ if ~isempty(PARAMETER_FILE)
 
 end
 
-
 load(FILE,'adc','ttl','audio','file_datenum');
 [path,file,ext]=fileparts(FILE);
 
@@ -110,9 +113,15 @@ if isempty(ttl.data) | ~isfield(ttl,'data')
 	ttl=[];
 end
 
+if use_reference & size(adc.data,3)>1
+	channel=[1 2];
+else
+	channel=1;
+end
+
 [raw,regress,trials]=fluolab_fb_proc(adc,audio,ttl,'blanking',blanking,'normalize',normalize,'dff',dff,'classify_trials',classify_trials,...
 	'channel',channel,'daf_level',daf_level,'trial_cut',trial_cut,'newfs',newfs,'tau',tau,'detrend_win',detrend_win,'detrend_method',detrend_method,...
-	'nmads',nmads,'padding',padding);
+	'nmads',nmads,'padding',padding,'channel',channel);
 
 if isempty(raw)
 	warning('Fluo analysis could not complete, skipping plotting...');
@@ -147,4 +156,3 @@ for i=1:length(fig_names)
 end
 
 save(fullfile(path,save_dir,save_file),'raw','regress','trials');
-
